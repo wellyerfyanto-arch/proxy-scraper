@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Browser System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-stop {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .status-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .status-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .status-running {
+            border-left-color: #27ae60;
+        }
+        
+        .status-stopped {
+            border-left-color: #e74c3c;
+        }
+        
+        .log-container {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .log-success {
+            color: #27ae60;
+        }
+        
+        .log-error {
+            color: #e74c3c;
+        }
+        
+        .log-info {
+            color: #3498db;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Automated Browser System</h1>
+            <p>Advanced SEO Automation with Human Behavior Simulation</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <h2>⚙️ Session Configuration</h2>
+                
+                <form id="configForm">
+                    <div class="form-group">
+                        <label for="searchQuery">🔍 Search Query (Google):</label>
+                        <input type="text" id="searchQuery" placeholder="Enter search terms..." value="python programming tutorials">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tabCount">📑 Number of Tabs:</label>
+                        <select id="tabCount">
+                            <option value="2">2 Tabs</option>
+                            <option value="3" selected>3 Tabs</option>
+                            <option value="4">4 Tabs</option>
+                            <option value="5">5 Tabs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sessionCount">🔄 Session Count:</label>
+                        <select id="sessionCount">
+                            <option value="1">1 Session</option>
+                            <option value="3" selected>3 Sessions</option>
+                            <option value="5">5 Sessions</option>
+                            <option value="10">10 Sessions</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deviceType">📱 Device Type:</label>
+                        <select id="deviceType">
+                            <option value="random">Random (Mobile/Desktop)</option>
+                            <option value="mobile">Mobile Only</option>
+                            <option value="desktop">Desktop Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="vpnExtension">🛡️ VPN Extension:</label>
+                        <select id="vpnExtension">
+                            <option value="random">Random Free VPN</option>
+                            <option value="touchvpn">Touch VPN</option>
+                            <option value="hotspotshield">Hotspot Shield</option>
+                            <option value="betternet">Betternet</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customUrls">🔗 Custom URLs (one per line):</label>
+                        <textarea id="customUrls" placeholder="Enter custom URLs to visit..."></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn" onclick="startAutomation()">🚀 Start Automation</button>
+                    <button type="button" class="btn btn-stop" onclick="stopAutomation()" style="margin-top: 10px;">🛑 Stop Automation</button>
+                </form>
+            </div>
+            
+            <div class="status-section">
+                <h2>📊 System Status</h2>
+                
+                <div class="status-item" id="systemStatus">
+                    <strong>Status:</strong> <span id="statusText">Ready</span>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="sessionsCompleted">0</div>
+                        <div class="stat-label">Sessions Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="tabsOpened">0</div>
+                        <div class="stat-label">Tabs Opened</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="adsClicked">0</div>
+                        <div class="stat-label">Ads Clicked</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>📝 Activity Log:</label>
+                    <div class="log-container" id="logContainer">
+                        <div class="log-entry log-info">System initialized and ready</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>🔄 Auto Refresh:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="clearLogs()">🗑️ Clear Logs</button>
+                        <button class="btn" onclick="exportLogs()">📤 Export Logs</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let automationRunning = false;
+        let eventSource = null;
+        
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function updateStats(data) {
+            if (data.sessions_completed !== undefined) {
+                document.getElementById('sessionsCompleted').textContent = data.sessions_completed;
+            }
+            if (data.tabs_opened !== undefined) {
+                document.getElementById('tabsOpened').textContent = data.tabs_opened;
+            }
+            if (data.ads_clicked !== undefined) {
+                document.getElementById('adsClicked').textContent = data.ads_clicked;
+            }
+        }
+        
+        function startAutomation() {
+            if (automationRunning) {
+                addLog('Automation is already running', 'error');
+                return;
+            }
+            
+            const config = {
+                search_query: document.getElementById('searchQuery').value,
+                tab_count: parseInt(document.getElementById('tabCount').value),
+                session_count: parseInt(document.getElementById('sessionCount').value),
+                device_type: document.getElementById('deviceType').value,
+                vpn_extension: document.getElementById('vpnExtension').value,
+                custom_urls: document.getElementById('customUrls').value.split('\n').filter(url => url.trim())
+            };
+            
+            fetch('/start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    automationRunning = true;
+                    document.getElementById('statusText').textContent = 'Running';
+                    document.getElementById('systemStatus').className = 'status-item status-running';
+                    addLog('Automation started successfully', 'success');
+                    startSSE();
+                } else {
+                    addLog('Failed to start automation: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                addLog('Error starting automation: ' + error, 'error');
+            });
+        }
+        
+        function stopAutomation() {
+            if (!automationRunning) {
+                addLog('No automation running', 'error');
+                return;
+            }
+            
+            fetch('/stop', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    automationRunning = false;
+                    document.getElementById('statusText').textContent = 'Stopped';
+                    document.getElementById('systemStatus').className = 'status-item status-stopped';
+                    addLog('Automation stopped', 'info');
+                    if (eventSource) {
+                        eventSource.close();
+                    }
+                }
+            });
+        }
+        
+        function startSSE() {
+            eventSource = new EventSource('/stream');
+            
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'log') {
+                    addLog(data.message, data.level);
+                } else if (data.type === 'stats') {
+                    updateStats(data.data);
+                } else if (data.type === 'status') {
+                    document.getElementById('statusText').textContent = data.message;
+                    if (data.message === 'Completed' || data.message === 'Stopped') {
+                        automationRunning = false;
+                        document.getElementById('systemStatus').className = 'status-item status-stopped';
+                    }
+                }
+            };
+            
+            eventSource.onerror = function(event) {
+                addLog('Connection error with server', 'error');
+                eventSource.close();
+            };
+        }
+        
+        function clearLogs() {
+            document.getElementById('logContainer').innerHTML = '';
+            addLog('Logs cleared', 'info');
+        }
+        
+        function exportLogs() {
+            const logs = document.getElementById('logContainer').innerText;
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `automation-logs-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Initialize
+        document.getElementById('statusText').textContent = 'Ready';
+    </script>
+</body>
+</html>
