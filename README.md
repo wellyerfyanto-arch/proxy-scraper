@@ -17,6 +17,19 @@ This app is configured for easy deployment on Render.com
 npm install
 npm start
 Visit http://localhost:3000
+Name: proxy-scraper (atau nama yang diinginkan)
+
+Environment: Node
+
+Region: Singapore (atau terdekat)
+
+Branch: main
+
+Root Directory: (kosongkan)
+
+Build Command: npm install
+
+Start Command: npm start
 
 ## 🔧 Step Deployment di Render
 
