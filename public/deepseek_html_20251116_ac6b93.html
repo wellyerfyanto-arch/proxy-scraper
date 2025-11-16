@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Proxy Scraper - No Login Required</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card.premium {
+            border-color: #f39c12;
+            background: #fef5e7;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status.loading {
+            border-color: #3498db;
+            background: #d6eaf8;
+            color: #2980b9;
+        }
+
+        .status.success {
+            border-color: #27ae60;
+            background: #d5f4e6;
+            color: #229954;
+        }
+
+        .status.error {
+            border-color: #e74c3c;
+            background: #fadbd8;
+            color: #c0392b;
+        }
+
+        .sources-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .source-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .source-card.active {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+
+        .source-card.premium {
+            border-color: #f39c12;
+            background: #fef5e7;
+        }
+
+        .source-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .source-count {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .proxy-list-container {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .proxy-list-header {
+            background: #34495e;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .proxy-count {
+            font-weight: 600;
+        }
+
+        .proxy-list {
+            max-height: 500px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .proxy-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #dee2e6;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            transition: background 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .proxy-item:hover {
+            background: #e9ecef;
+        }
+
+        .proxy-item:last-child {
+            border-bottom: none;
+        }
+
+        .proxy-source {
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .proxy-source.premium {
+            background: #f39c12;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            font-weight: 600;
+        }
+
+        .badge-free {
+            background: #27ae60;
+            color: white;
+        }
+
+        .badge-premium {
+            background: #f39c12;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                flex: none;
+            }
+            
+            .stats-grid, .sources-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Advanced Proxy Scraper</h1>
+            <p>No Login Required • Premium & Free Sources • Real-time Testing</p>
+        </div>
+        
+        <div class="content">
+            <div class="stats-grid" id="statsGrid">
+                <!-- Stats will be populated here -->
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" onclick="fetchProxies()" id="fetchBtn">
+                    🔄 Get Fresh Proxies
+                </button>
+                <button class="btn btn-success" onclick="copyAllProxies()" id="copyBtn">
+                    📋 Copy All Proxies
+                </button>
+                <button class="btn btn-warning" onclick="fetchStats()" id="statsBtn">
+                    📊 Refresh Stats
+                </button>
+                <button class="btn btn-secondary" onclick="clearProxies()">
+                    🗑️ Clear List
+                </button>
+            </div>
+            
+            <div class="status" id="status">
+                Click "Get Fresh Proxies" to start scraping from 10+ sources
+            </div>
+            
+            <div class="sources-info" id="sourcesInfo">
+                <!-- Sources will be populated here -->
+            </div>
+            
+            <div class="proxy-list-container">
+                <div class="proxy-list-header">
+                    <span>✅ Working Proxies (Tested Live)</span>
+                    <span class="proxy-count" id="proxyCount">0 proxies</span>
+                </div>
+                <div class="proxy-list" id="proxyList">
+                    <!-- Proxy list will be populated here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>⚡ Deployed on Render • 🔒 No Login Required • 🌐 10+ Sources</p>
+            <p>💡 Proxies are tested in real-time for connectivity</p>
+        </div>
+    </div>
+
+    <script>
+        let currentProxies = [];
+
+        // Load stats on page load
+        window.addEventListener('load', () => {
+            fetchStats();
+            fetchProxies();
+        });
+
+        async function fetchStats() {
+            const statsBtn = document.getElementById('statsBtn');
+            const statsGrid = document.getElementById('statsGrid');
+            
+            statsBtn.disabled = true;
+            statsBtn.innerHTML = '<div class="loading-spinner"></div>Loading...';
+            
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${data.totalProxies}</div>
+                        <div class="stat-label">Total Proxies Found</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.workingProxies}</div>
+                        <div class="stat-label">Working Proxies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.successRate}%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                    <div class="stat-card premium">
+                        <div class="stat-value">${data.sources.filter(s => s.type === 'premium').length}</div>
+                        <div class="stat-label">Premium Sources</div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+                statsGrid.innerHTML = '<div class="stat-card">Error loading stats</div>';
+            } finally {
+                statsBtn.disabled = false;
+                statsBtn.textContent = '📊 Refresh Stats';
+            }
+        }
+
+        async function fetchProxies() {
+            const fetchBtn = document.getElementById('fetchBtn');
+            const status = document.getElementById('status');
+            const proxyList = document.getElementById('proxyList');
+            const sourcesInfo = document.getElementById('sourcesInfo');
+            
+            fetchBtn.disabled = true;
+            fetchBtn.innerHTML = '<div class="loading-spinner"></div>Scraping...';
+            status.className = 'status loading';
+            status.innerHTML = '<div class="loading-spinner"></div>Scraping proxies from 10+ premium and free sources...';
+            
+            proxyList.innerHTML = '';
+            sourcesInfo.innerHTML = '<div class="source-card">Loading sources...</div>';
+            
+            try {
+                const response = await fetch('/api/proxies');
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentProxies = data.proxies;
+                    displayProxies(currentProxies);
+                    displaySources(data.sources);
+                    status.className = 'status success';
+                    status.textContent = `✅ Found ${data.count} working proxies from ${data.sources.length} sources!`;
+                    
+                    // Refresh stats after getting proxies
+                    fetchStats();
+                } else {
+                    throw new Error(data.error || 'Failed to fetch proxies');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                status.className = 'status error';
+                status.textContent = `❌ Error: ${error.message}`;
+            } finally {
+                fetchBtn.disabled = false;
+                fetchBtn.textContent = '🔄 Get Fresh Proxies';
+            }
+        }
+
+        function displayProxies(proxies) {
+            const proxyList = document.getElementById('proxyList');
+            const proxyCount = document.getElementById('proxyCount');
+            
+            proxyList.innerHTML = '';
+            proxyCount.textContent = `${proxies.length} proxies`;
+            
+            if (proxies.length === 0) {
+                proxyList.innerHTML = '<div class="proxy-item" style="text-align: center; color: #7f8c8d;">No working proxies found. Try refreshing.</div>';
+                return;
+            }
+            
+            proxies.forEach(item => {
+                const proxyElement = document.createElement('div');
+                proxyElement.className = 'proxy-item';
+                proxyElement.innerHTML = `
+                    <span>${item.proxy}</span>
+                    <span class="proxy-source ${item.type === 'premium' ? 'premium' : ''}">
+                        ${item.source} ${item.type === 'premium' ? '⭐' : '🆓'}
+                    </span>
+                `;
+                proxyList.appendChild(proxyElement);
+            });
+        }
+
+        function displaySources(sources) {
+            const sourcesInfo = document.getElementById('sourcesInfo');
+            sourcesInfo.innerHTML = '';
+            
+            sources.forEach(source => {
+                const sourceElement = document.createElement('div');
+                const isPremium = source.type === 'premium';
+                const isActive = source.count > 0;
+                
+                sourceElement.className = `source-card ${isPremium ? 'premium' : ''} ${isActive ? 'active' : ''}`;
+                sourceElement.innerHTML = `
+                    <div class="source-name">
+                        ${source.name}
+                        <span class="badge ${isPremium ? 'badge-premium' : 'badge-free'}">
+                            ${isPremium ? 'PREMIUM' : 'FREE'}
+                        </span>
+                    </div>
+                    <div class="source-count">${source.count}</div>
+                    <div>proxies</div>
+                `;
+                sourcesInfo.appendChild(sourceElement);
+            });
+        }
+
+        async function copyAllProxies() {
+            if (currentProxies.length === 0) {
+                alert('No proxies to copy!');
+                return;
+            }
+            
+            const proxyText = currentProxies.map(item => item.proxy).join('\n');
+            
+            try {
+                await navigator.clipboard.writeText(proxyText);
+                
+                const copyBtn = document.getElementById('copyBtn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✅ Copied!';
+                copyBtn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+                
+            } catch (error) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = proxyText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                alert('All proxies copied to clipboard!');
+            }
+        }
+
+        function clearProxies() {
+            currentProxies = [];
+            displayProxies([]);
+            document.getElementById('sourcesInfo').innerHTML = '';
+            document.getElementById('status').className = 'status';
+            document.getElementById('status').textContent = 'List cleared. Click "Get Fresh Proxies" to refresh';
+        }
+    </script>
+</body>
+</html>
